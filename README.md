@@ -1,8 +1,8 @@
-# 🏋️‍♂️ Functional Sport Performance Assistant
+# Functional Sport Performance Assistant
 
 Assistant d'entraînement intelligent conçu pour analyser la progression de la force (1RM estimé via Epley), surveiller la fatigue nerveuse (*ACWR*) et piloter la trajectoire de prise de masse (lissage EWMA), le tout en appliquant les paradigmes stricts de la **programmation fonctionnelle**.
 
-## 🚀 Piliers de l'Architecture Fonctionnelle
+## Piliers de l'Architecture Fonctionnelle
 
 1. **Zéro Mutabilité :** L'historique des entraînements est figé en mémoire via l'utilisation de `@dataclass(frozen=True)` pour garantir l'absence d'effets de bord de type mutation en place.
 2. **Fonctions 100% Pures :** Chaque calcul (tonnage, 1RM, ratios de charge) prend des entrées immuables et retourne de nouvelles sorties de manière strictement déterministe.
@@ -13,7 +13,7 @@ Assistant d'entraînement intelligent conçu pour analyser la progression de la 
 
 Smart training assistant designed to analyze strength progression (1RM estimated via Epley), monitor neural fatigue (ACWR), and manage bulking trajectories (EWMA smoothing), all while applying strict functional programming paradigms.
 
-## 🚀 Pillars of Functional Architecture
+## Pillars of Functional Architecture
 
 1. **Zero Mutability:** Workout history is frozen in memory using @dataclass(frozen=True) to ensure the complete absence of in-place mutation side effects.
 *2. **100% Pure Functions:** Every calculation (tonnage, 1RM, load ratios) takes immutable inputs and returns new outputs in a strictly deterministic manner.
@@ -22,7 +22,7 @@ Smart training assistant designed to analyze strength progression (1RM estimated
 
 ---
 
-## 🛠️ Installation et Utilisation
+## Installation et Utilisation
 
 1. **Cloner le dépôt / Clone the reposit :**
    ```bash
