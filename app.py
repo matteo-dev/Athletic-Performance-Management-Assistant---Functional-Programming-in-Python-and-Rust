@@ -1,18 +1,15 @@
-# Fichier principal de l'application Streamlit pour l'analyse de la progression en squat et la gestion de la fatigue.
+# Main Streamlit application file for squat progression analysis and fatigue management.
 
-
-# Importation des modules nécessaires 
-import streamlit as st # Framework pour créer des applications web interactives en Python
+# Import necessary modules
+import streamlit as st # Framework to create interactive web apps in Python
 from datetime import date
 from models import WorkoutRecord
 from analytics import extract_squat_progression, calculate_total_volume, calculate_1rm_epley, calculate_acwr, extract_bodyweight_trend, calculate_ewma, project_target_date
 
-
-# Utilisation de st.cache_data pour mettre en cache les données simulées afin d'éviter de les recalculer à chaque interaction 
+# Use st.cache_data to cache mock data to avoid recalculating on each interaction
 @st.cache_data
 
-
-# Fonction pour charger des données simulées d'entraînement
+# Function to load simulated workout data
 def load_mock_data() -> tuple[WorkoutRecord, ...]:
     return (
         WorkoutRecord(date(2026, 9, 1), "Squat", 80.0, 5, 7, 67.0),
@@ -22,71 +19,72 @@ def load_mock_data() -> tuple[WorkoutRecord, ...]:
         WorkoutRecord(date(2026, 9, 29), "Squat", 92.5, 3, 9, 70.1),
     )
 
-# Fonction main de l'application Streamlit
+# Main function of the Streamlit application
 def main():
-    st.title("🏋️‍♂️ Assistant Data-Sportif & Biomécanique")
-    st.write("Architecture 100% Fonctionnelle - Zéro Mutabilité")
+    st.title("🏋️‍♂️ Sports-Data & Biomechanics Assistant")
+    st.write("100% Functional Architecture - Zero Mutability")
     
     history = load_mock_data()
     
-    # Création des onglets Streamlit
-    tab1, tab2, tab3 = st.tabs(["📊 Progression & 1RM", "🧠 Fatigue & ACWR", "⚖️ Poids de corps (67 -> 70kg)"])
+    # Create Streamlit tabs
+    tab1, tab2, tab3 = st.tabs(["📊 Progression & 1RM", "🧠 Fatigue & ACWR", "⚖️ Bodyweight (67 -> 70kg)"])
     
     with tab1:
-        st.header("Analyse de la Force (Squat)")
+        st.header("Strength Analysis (Squat)")
         total_volume = calculate_total_volume(history)
         squat_1rm_progression = extract_squat_progression(history)
         dates = tuple(map(lambda r: r.date, filter(lambda r: r.exercise == "Squat", history)))
         
-        st.metric(label="Volume Global Historique", value=f"{total_volume} kg")
-        st.line_chart({"Date": dates, "1RM Estimé (kg)": squat_1rm_progression}, x="Date", y="1RM Estimé (kg)")
+        st.metric(label="Total Historical Volume", value=f"{total_volume} kg")
+        st.line_chart({"Date": dates, "Estimated 1RM (kg)": squat_1rm_progression}, x="Date", y="Estimated 1RM (kg)")
         
     with tab2:
-        st.header("Gestion de la Fatigue & Système Nerveux")
-        st.write("Le ratio ACWR optimal se situe entre 0.8 et 1.3. Au-delà, le risque de blessure et de blocage nerveux augmente (le fameux 'mur').")
+        st.header("Fatigue & Nervous System Management")
+        st.write("The optimal ACWR ratio is between 0.8 and 1.3. Beyond this, the risk of injury and central nervous system fatigue increases (hitting 'the wall').")
         
-        # On calcule l'ACWR à la date du dernier entraînement
+        # Calculate ACWR on the date of the last workout
         last_workout_date = history[-1].date
         acwr_score = calculate_acwr(history, last_workout_date)
         
-        st.metric(label="ACWR Actuel", value=f"{round(acwr_score, 2)}")
+        st.metric(label="Current ACWR", value=f"{round(acwr_score, 2)}")
         if acwr_score > 1.3:
-            st.warning("⚠️ Attention : Surcharge aiguë détectée. Le blocage mental au squat vient probablement d'une fatigue du système nerveux central. Réduisez le volume.")
+            st.warning("⚠️ Warning: Acute overload detected. The mental block on the squat is likely due to central nervous system fatigue. Reduce the volume.")
         else:
-            st.success("✅ Charge d'entraînement optimale.")
+            st.success("✅ Optimal training load.")
             
     with tab3:
-        st.header("⚖️ Trajectoire de Prise de Masse (EWMA)")
-        st.write("Objectif : Atteindre les 70kg de manière contrôlée, filtré par lissage exponentiel (EWMA, α=0.3).")
+        st.header("⚖️ Bulking Trajectory (EWMA)")
+        st.write("Goal: Reach 70kg in a controlled manner, filtered by exponential smoothing (EWMA, α=0.3).")
         
-        # 1. Extraction pure des données brutes
+        # 1. Pure extraction of raw data
         dates_bw, weights = extract_bodyweight_trend(history)
         
-        # 2. Application du modèle mathématique (Pipeline de données)
+        # 2. Mathematical model application (Data pipeline)
         ewma_weights = calculate_ewma(weights, alpha=0.3)
         target_date = project_target_date(dates_bw, ewma_weights, target_kg=70.0)
         
-        # 3. Affichage des KPIs
+        # 3. Display KPIs
         current_weight = weights[-1]
         st.metric(
-            label="Poids Actuel vs Objectif (70kg)", 
+            label="Current Weight vs Goal (70kg)", 
             value=f"{current_weight} kg", 
-            delta=f"{round(70.0 - current_weight, 1)} kg restants",
+            delta=f"{round(70.0 - current_weight, 1)} kg remaining",
             delta_color="off"
         )
         
         if target_date:
-            st.success(f"📈 Projection mathématique : Objectif des 70kg estimé au **{target_date.strftime('%d %B %Y')}**.")
+            st.success(f"📈 Mathematical projection: 70kg goal estimated for **{target_date.strftime('%d %B %Y')}**.")
         
-        # 4. Graphique comparatif (Brut vs Lissé)
+        # 4. Comparative chart (Raw vs Smoothed)
         import pandas as pd
-        # Nous utilisons pandas temporairement juste pour le formatage attendu par Streamlit (st.line_chart)
+        # We temporarily use pandas just for the formatting expected by Streamlit (st.line_chart)
         chart_data = pd.DataFrame({
             "Date": dates_bw,
-            "Poids Brut (kg)": weights,
-            "Tendance EWMA (kg)": ewma_weights
+            "Raw Weight (kg)": weights,
+            "EWMA Trend (kg)": ewma_weights
         }).set_index("Date")
         
         st.line_chart(chart_data)
+
 if __name__ == "__main__":
     main()
