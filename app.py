@@ -6,6 +6,8 @@ from datetime import date
 from models import WorkoutRecord
 from analytics import extract_squat_progression, calculate_total_volume, calculate_1rm_epley, calculate_acwr, extract_bodyweight_trend, calculate_ewma, project_target_date
 
+st.set_page_config(page_title="Athletic Performance Management Assistant", page_icon="🏋️‍♂️", layout="wide")
+
 # Use st.cache_data to cache mock data to avoid recalculating on each interaction
 @st.cache_data
 
